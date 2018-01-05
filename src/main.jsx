@@ -3,6 +3,9 @@ import React, { Component } from 'react';
 
 import './main.css';
 
+const PDFDocument = require( 'pdfkit' );
+const blobStream  = require( 'blob-stream');
+
 class PDFTest extends Component 
 {
     constructor( props ) 
@@ -16,24 +19,30 @@ class PDFTest extends Component
             pdfData:  null
         }
 
-        var mythis = this;
-        var xhr = new XMLHttpRequest();
-        // load `document` from `cache`
-        xhr.open("GET", "./sample.pdf", true); 
-        xhr.responseType = "blob";
-        xhr.onload = function (e) 
+        var image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAIklEQVR4nGL4z4AfEpAmXgE2uVEF5CjADSlXAAAAAP//AwAlXf8BrF6/6QAAAABJRU5ErkJggg==";
+    
+        var doc = new PDFDocument( { size: 'legal' } );
+        
+        this.stream = doc.pipe( blobStream() );
+
+        doc.fontSize( 9 );
+        doc.font( 'Times-Roman' );
+
+        var width = doc.widthOfString( 'hello' );
+
+        console.log( doc );
+        console.log( width );
+
+        doc.text( "hello, world! I'm really here" );
+        doc.rect( 10, 10, 100, 100 ).stroke();
+        doc.end();
+
+        this.stream.on( 'finish', function() 
         {
-            if ( this.status === 200 ) 
-            {
-                console.log( "Load Success" );
-                // `blob` response
-                console.log(this.response);
-                var file = window.URL.createObjectURL(this.response);
-                console.log( file );
-                mythis.setState({pdfData:file});
-            }
-        };
-        xhr.send();        
+            console.log( "Stream Finished" );
+
+            this.setState( { pdfData: this.stream.toBlobURL( 'application/pdf' ) } );
+        }.bind( this ) );      
     }
 
 
@@ -53,6 +62,8 @@ class PDFTest extends Component
 
     render() 
     {
+        console.log( "render" );
+        
         return (
             <div width="100%" height="100%"> 
                 <iframe id="pdf_doc" src={this.state.pdfData} type="application/pdf" width="100%" height="100%" style={{overflow: 'auto'}}>
