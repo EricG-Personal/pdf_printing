@@ -45,26 +45,29 @@ class PDFTest extends Component
     {
         console.log( "componentDidUpdate" );
 
-        setTimeout( function() 
-        { 
-            window.frames["pdf_doc"].focus();
-            window.frames["pdf_doc"].print();
-        }, 10000);
+
+    }
+
+
+
+    iframeloaded()
+    {
+        console.log( "iframe loaded" );
+
+        window.frames["pdf_doc"].focus();
+        window.frames["pdf_doc"].print();
     }
 
 
 
     render() 
     {
-        console.log( "render" );
-        
         return (
             <div width="100%" height="100%"> 
-                <iframe id="pdf_doc" src={this.state.pdfData} type="application/pdf" width="100%" height="100%" style={{overflow: 'auto'}}>
+                <iframe id="pdf_doc" src={this.state.pdfData} type="application/pdf" width="100%" height="100%" style={{overflow: 'auto'}} onLoad={this.iframeloaded.bind( this )}>
                 </iframe>
             </div>
         );
-
     }
 }
 
