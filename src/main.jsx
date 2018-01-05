@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import React, { Component } from 'react';
+import jsPDF from 'jsPDF';
 
 import './main.css';
 
@@ -14,23 +15,47 @@ class PDFTest extends Component
             numPages: null,
             pdfData:  null
         }
+        
+        var doc = new jsPDF({unit: 'pt', format: 'legal'});
+        var someText = "hello, world!";
+        var topCoordinate = 72;
+        var leftCoordinate = 72;
+        var padding = 8;
 
+        doc.setFont( "helvetica" );
+        doc.setFontSize( 24 );
+
+        var lineHeight 		= doc.getLineHeight();
+        var textWidth  		= doc.getTextWidth( someText );
+        var rectHeight 		= ( lineHeight + ( padding * 2 ) );
+        var halfRectHeight 	= rectHeight / 2;
+        var halfLineHeight	= lineHeight / 2;
+        var textYCoordinate = topCoordinate + halfRectHeight + halfLineHeight;
+
+        console.log( "Height: " + lineHeight );
+        console.log( "Width: " + textWidth );
+
+        doc.setDrawColor( 255, 0, 0 );
+        doc.rect( leftCoordinate, topCoordinate, textWidth, rectHeight );
+        doc.text( someText, leftCoordinate + padding, textYCoordinate );
+
+        doc.setDrawColor( 0, 0, 0 );
+        doc.rect( leftCoordinate, textYCoordinate - lineHeight, textWidth, lineHeight );
+
+        var blob   = doc.output( 'bloburl' );
         var mythis = this;
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "./sample.pdf", true); 
-        xhr.responseType = "blob";
-        xhr.onload = function (e) 
-        {
-            if ( this.status === 200 ) 
-            {
-                console.log( "Load Success" );                
-                console.log(this.response); // `blob` response
-                var file = window.URL.createObjectURL(this.response);
-                console.log( file );
-                mythis.setState({pdfData:file});
-            }
-        };
-        xhr.send();        
+
+        setTimeout( function() 
+        { 
+            console.log( "Setting State" );
+
+            mythis.setState({pdfData: blob});
+        }, 5000);
+
+
+        console.log( blob );
+
+
     }
 
 
@@ -45,6 +70,8 @@ class PDFTest extends Component
     iframeloaded()
     {
         console.log( "iframe loaded" );
+        console.log( window.frames );
+
         window.frames["pdf_doc"].focus();
         window.frames["pdf_doc"].print();
     }
