@@ -54,8 +54,8 @@ class PDFTest extends Component
     {
         console.log( "iframe loaded" );
 
-        window.frames["pdf_doc"].focus();
-        window.frames["pdf_doc"].print();
+        window.frames[0].focus();
+        window.frames[0].print();
     }
 
 
