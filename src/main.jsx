@@ -27,12 +27,6 @@ class PDFTest extends Component
 
         doc.fontSize( 9 );
         doc.font( 'Times-Roman' );
-
-        var width = doc.widthOfString( 'hello' );
-
-        console.log( doc );
-        console.log( width );
-
         doc.text( "hello, world! I'm really here" );
         doc.rect( 10, 10, 100, 100 ).stroke();
         doc.end();
@@ -55,7 +49,7 @@ class PDFTest extends Component
         { 
             window.frames["pdf_doc"].focus();
             window.frames["pdf_doc"].print();
-        }, 5000);
+        }, 10000);
     }
 
 
