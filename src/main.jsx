@@ -9,7 +9,6 @@ class PDFTest extends Component
     {
         super(props);
 
-        
         this.state = {
             file:     './sample.pdf',
             numPages: null,
@@ -18,16 +17,14 @@ class PDFTest extends Component
 
         var mythis = this;
         var xhr = new XMLHttpRequest();
-        // load `document` from `cache`
         xhr.open("GET", "./sample.pdf", true); 
         xhr.responseType = "blob";
         xhr.onload = function (e) 
         {
             if ( this.status === 200 ) 
             {
-                console.log( "Load Success" );
-                // `blob` response
-                console.log(this.response);
+                console.log( "Load Success" );                
+                console.log(this.response); // `blob` response
                 var file = window.URL.createObjectURL(this.response);
                 console.log( file );
                 mythis.setState({pdfData:file});
@@ -41,12 +38,15 @@ class PDFTest extends Component
     componentDidUpdate()
     {
         console.log( "componentDidUpdate" );
+    }
 
-        setTimeout( function() 
-        { 
-            window.frames["pdf_doc"].focus();
-            window.frames["pdf_doc"].print();
-        }, 5000);
+
+
+    iframeloaded()
+    {
+        console.log( "iframe loaded" );
+        window.frames["pdf_doc"].focus();
+        window.frames["pdf_doc"].print();
     }
 
 
@@ -55,11 +55,10 @@ class PDFTest extends Component
     {
         return (
             <div width="100%" height="100%"> 
-                <iframe id="pdf_doc" src={this.state.pdfData} type="application/pdf" width="100%" height="100%" style={{overflow: 'auto'}}>
+                <iframe id="pdf_doc" src={this.state.pdfData} type="application/pdf" width="100%" height="100%" style={{overflow: 'auto'}} onLoad={this.iframeloaded.bind( this )}>
                 </iframe>
             </div>
         );
-
     }
 }
 
